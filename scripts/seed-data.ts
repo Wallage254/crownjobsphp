@@ -1,5 +1,5 @@
 import { db } from "../server/db";
-import { jobs, testimonials } from "@shared/schema";
+import { jobs, testimonials, categories } from "@shared/schema";
 
 const sampleJobs = [
   {
@@ -267,20 +267,67 @@ const sampleTestimonials = [
   }
 ];
 
+const defaultCategories = [
+  {
+    name: "Construction",
+    description: "Building, infrastructure, and construction management roles",
+    gifUrl: "https://media.giphy.com/media/26u4cqiYI30juCOGY/giphy.gif",
+    isActive: true
+  },
+  {
+    name: "Healthcare",
+    description: "Medical professionals, nurses, and healthcare support roles",
+    gifUrl: "https://media.giphy.com/media/l0HlL6eH6eEqL5MZ2/giphy.gif",
+    isActive: true
+  },
+  {
+    name: "Hospitality",
+    description: "Hotel management, restaurant, and tourism industry positions",
+    gifUrl: "https://media.giphy.com/media/3o6Zt3LdsGZ6VolH3y/giphy.gif",
+    isActive: true
+  },
+  {
+    name: "Skilled Trades",
+    description: "Electricians, plumbers, mechanics, and technical specialists",
+    gifUrl: "https://media.giphy.com/media/26uf759Y1qeSSlOcU/giphy.gif",
+    isActive: true
+  }
+];
+
 async function seedData() {
   try {
+    console.log("Seeding default categories...");
+    
+    // Insert default categories
+    for (const category of defaultCategories) {
+      try {
+        await db.insert(categories).values(category);
+      } catch (error) {
+        // Category might already exist, continue
+        console.log(`Category ${category.name} already exists, skipping...`);
+      }
+    }
+    
     console.log("Seeding sample jobs...");
     
     // Insert sample jobs
     for (const job of sampleJobs) {
-      await db.insert(jobs).values(job);
+      try {
+        await db.insert(jobs).values(job);
+      } catch (error) {
+        console.log(`Job ${job.title} already exists, skipping...`);
+      }
     }
     
     console.log("Seeding sample testimonials...");
     
     // Insert sample testimonials
     for (const testimonial of sampleTestimonials) {
-      await db.insert(testimonials).values(testimonial);
+      try {
+        await db.insert(testimonials).values(testimonial);
+      } catch (error) {
+        console.log(`Testimonial from ${testimonial.name} already exists, skipping...`);
+      }
     }
     
     console.log("✅ Sample data seeded successfully!");

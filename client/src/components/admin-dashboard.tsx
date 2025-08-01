@@ -31,7 +31,7 @@ import { insertJobSchema, insertTestimonialSchema } from "@shared/schema";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import type { Job, Application, Testimonial, Message } from "@shared/schema";
+import type { Job, Application, Testimonial, Message, Category } from "@shared/schema";
 
 const jobFormSchema = insertJobSchema.extend({
   companyLogo: z.any().optional(),
@@ -39,11 +39,20 @@ const jobFormSchema = insertJobSchema.extend({
 });
 
 const testimonialFormSchema = insertTestimonialSchema.extend({
-  photo: z.any().optional()
+  photo: z.any().optional(),
+  videoUrl: z.string().url().optional().or(z.literal(""))
+});
+
+const categoryFormSchema = z.object({
+  name: z.string().min(1, "Category name is required"),
+  description: z.string().optional(),
+  gifUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
+  isActive: z.boolean().default(true)
 });
 
 type JobFormData = z.infer<typeof jobFormSchema>;
 type TestimonialFormData = z.infer<typeof testimonialFormSchema>;
+type CategoryFormData = z.infer<typeof categoryFormSchema>;
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("jobs");
@@ -72,6 +81,10 @@ export default function AdminDashboard() {
     queryKey: ['/api/messages'],
   });
 
+  const { data: categories, isLoading: categoriesLoading } = useQuery<Category[]>({
+    queryKey: ['/api/categories'],
+  });
+
   // Job form
   const jobForm = useForm<JobFormData>({
     resolver: zodResolver(jobFormSchema),
@@ -98,6 +111,18 @@ export default function AdminDashboard() {
       country: "",
       rating: 5,
       comment: "",
+      videoUrl: "",
+      isActive: true
+    }
+  });
+
+  // Category form
+  const categoryForm = useForm<CategoryFormData>({
+    resolver: zodResolver(categoryFormSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      gifUrl: "",
       isActive: true
     }
   });
@@ -170,6 +195,34 @@ export default function AdminDashboard() {
     }
   });
 
+  // Category mutations
+  const createCategoryMutation = useMutation({
+    mutationFn: async (data: CategoryFormData) => {
+      return await apiRequest('POST', '/api/categories', data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
+      categoryForm.reset();
+      toast({ title: "Success", description: "Category created successfully" });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to create category", variant: "destructive" });
+    },
+  });
+
+  const deleteCategoryMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return await apiRequest('DELETE', `/api/categories/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
+      toast({ title: "Success", description: "Category deleted successfully" });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to delete category", variant: "destructive" });
+    },
+  });
+
   // Form handlers
   const onSubmitJob = async (data: JobFormData) => {
     const formData = new FormData();
@@ -213,6 +266,10 @@ export default function AdminDashboard() {
     createTestimonialMutation.mutate(formData);
   };
 
+  const onSubmitCategory = async (data: CategoryFormData) => {
+    createCategoryMutation.mutate(data);
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
@@ -248,7 +305,7 @@ export default function AdminDashboard() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="jobs" className="flex items-center space-x-2">
               <Briefcase className="w-4 h-4" />
               <span>Jobs</span>
@@ -260,6 +317,10 @@ export default function AdminDashboard() {
             <TabsTrigger value="testimonials" className="flex items-center space-x-2">
               <Star className="w-4 h-4" />
               <span>Testimonials</span>
+            </TabsTrigger>
+            <TabsTrigger value="categories" className="flex items-center space-x-2">
+              <Building className="w-4 h-4" />
+              <span>Categories</span>
             </TabsTrigger>
             <TabsTrigger value="messages" className="flex items-center space-x-2">
               <MessageSquare className="w-4 h-4" />
@@ -295,10 +356,11 @@ export default function AdminDashboard() {
                             <SelectValue placeholder="Select category" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Construction">Construction</SelectItem>
-                            <SelectItem value="Healthcare">Healthcare</SelectItem>
-                            <SelectItem value="Hospitality">Hospitality</SelectItem>
-                            <SelectItem value="Skilled Trades">Skilled Trades</SelectItem>
+                            {categories?.map((category) => (
+                              <SelectItem key={category.id} value={category.name}>
+                                {category.name}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       </div>
@@ -586,6 +648,16 @@ export default function AdminDashboard() {
                     </div>
                     
                     <div>
+                      <Label htmlFor="videoUrl">Video URL (optional)</Label>
+                      <Input 
+                        id="videoUrl" 
+                        placeholder="https://youtube.com/..." 
+                        {...testimonialForm.register("videoUrl")} 
+                        className="mt-1" 
+                      />
+                    </div>
+                    
+                    <div>
                       <Label htmlFor="testimonialPhoto">Photo</Label>
                       <Input 
                         id="testimonialPhoto" 
@@ -637,6 +709,11 @@ export default function AdminDashboard() {
                                 <p className="text-sm text-gray-600">{testimonial.country}</p>
                                 {renderStars(testimonial.rating)}
                                 <p className="text-sm text-gray-700 mt-2">{testimonial.comment}</p>
+                                {testimonial.videoUrl && (
+                                  <p className="text-xs text-blue-600 mt-1">
+                                    Video: <a href={testimonial.videoUrl} target="_blank" rel="noopener noreferrer" className="underline">Watch</a>
+                                  </p>
+                                )}
                               </div>
                             </div>
                             <div className="flex space-x-2">
@@ -648,6 +725,109 @@ export default function AdminDashboard() {
                                 size="sm" 
                                 onClick={() => deleteTestimonialMutation.mutate(testimonial.id)}
                                 disabled={deleteTestimonialMutation.isPending}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Categories Tab */}
+          <TabsContent value="categories" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Add New Category Form */}
+              <Card>
+                <CardContent className="p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <Plus className="w-5 h-5 mr-2" />
+                    Add New Category
+                  </h3>
+                  <form onSubmit={categoryForm.handleSubmit(onSubmitCategory)} className="space-y-4">
+                    <div>
+                      <Label htmlFor="categoryName">Category Name</Label>
+                      <Input id="categoryName" {...categoryForm.register("name")} className="mt-1" />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="categoryDescription">Description</Label>
+                      <Textarea 
+                        id="categoryDescription" 
+                        rows={3} 
+                        {...categoryForm.register("description")} 
+                        className="mt-1" 
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="categoryGifUrl">GIF URL</Label>
+                      <Input 
+                        id="categoryGifUrl" 
+                        placeholder="https://media.giphy.com/..." 
+                        {...categoryForm.register("gifUrl")} 
+                        className="mt-1" 
+                      />
+                    </div>
+                    
+                    <Button 
+                      type="submit" 
+                      className="w-full"
+                      disabled={createCategoryMutation.isPending}
+                    >
+                      {createCategoryMutation.isPending ? "Adding..." : "Add Category"}
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
+
+              {/* Current Categories */}
+              <Card>
+                <CardContent className="p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Current Categories</h3>
+                  {categoriesLoading ? (
+                    <div className="space-y-4">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="animate-pulse">
+                          <div className="h-20 bg-gray-200 rounded"></div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {categories?.map((category) => (
+                        <div key={category.id} className="border border-gray-200 rounded-lg p-4">
+                          <div className="flex justify-between items-start">
+                            <div className="flex items-start space-x-3">
+                              {category.gifUrl && (
+                                <img 
+                                  src={category.gifUrl} 
+                                  alt={category.name}
+                                  className="w-16 h-16 rounded object-cover"
+                                />
+                              )}
+                              <div>
+                                <h4 className="font-semibold text-gray-900">{category.name}</h4>
+                                <p className="text-sm text-gray-600">{category.description}</p>
+                                <Badge variant={category.isActive ? "default" : "secondary"} className="mt-2">
+                                  {category.isActive ? "Active" : "Inactive"}
+                                </Badge>
+                              </div>
+                            </div>
+                            <div className="flex space-x-2">
+                              <Button variant="ghost" size="sm">
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                onClick={() => deleteCategoryMutation.mutate(category.id)}
+                                disabled={deleteCategoryMutation.isPending}
                               >
                                 <Trash2 className="w-4 h-4" />
                               </Button>

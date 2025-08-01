@@ -1,8 +1,9 @@
 import { 
-  users, jobs, applications, testimonials, messages,
+  users, jobs, applications, testimonials, messages, categories,
   type User, type InsertUser, type Job, type InsertJob, 
   type Application, type InsertApplication, type Testimonial, 
-  type InsertTestimonial, type Message, type InsertMessage 
+  type InsertTestimonial, type Message, type InsertMessage,
+  type Category, type InsertCategory
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, or, ilike, gte, lte } from "drizzle-orm";
@@ -43,6 +44,12 @@ export interface IStorage {
   getAllMessages(): Promise<Message[]>;
   createMessage(message: InsertMessage): Promise<Message>;
   markMessageAsRead(id: string): Promise<Message | undefined>;
+
+  // Category methods
+  getAllCategories(): Promise<Category[]>;
+  createCategory(category: InsertCategory): Promise<Category>;
+  updateCategory(id: string, category: Partial<InsertCategory>): Promise<Category | undefined>;
+  deleteCategory(id: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -216,6 +223,33 @@ export class DatabaseStorage implements IStorage {
       .where(eq(messages.id, id))
       .returning();
     return message || undefined;
+  }
+
+  // Category methods
+  async getAllCategories(): Promise<Category[]> {
+    return await db.select().from(categories).where(eq(categories.isActive, true)).orderBy(categories.name);
+  }
+
+  async createCategory(insertCategory: InsertCategory): Promise<Category> {
+    const [category] = await db
+      .insert(categories)
+      .values(insertCategory)
+      .returning();
+    return category;
+  }
+
+  async updateCategory(id: string, updateCategory: Partial<InsertCategory>): Promise<Category | undefined> {
+    const [category] = await db
+      .update(categories)
+      .set(updateCategory)
+      .where(eq(categories.id, id))
+      .returning();
+    return category || undefined;
+  }
+
+  async deleteCategory(id: string): Promise<boolean> {
+    const result = await db.delete(categories).where(eq(categories.id, id));
+    return result.rowCount > 0;
   }
 }
 
