@@ -94,15 +94,24 @@ export default function ApplicationForm({ job, onClose }: ApplicationFormProps) 
     
     const formData = new FormData();
     
-    // Add all form fields (excluding consent and file fields)
-    Object.keys(data).forEach(key => {
-      if (key !== 'profilePhoto' && key !== 'cv' && key !== 'consent') {
-        const value = data[key as keyof ApplicationFormData];
-        if (value !== null && value !== undefined) {
-          formData.append(key, String(value));
-        }
-      }
-    });
+    // Add all form fields explicitly - ensure they're properly added to FormData
+    formData.append('jobId', data.jobId || '');
+    formData.append('firstName', data.firstName || '');
+    formData.append('lastName', data.lastName || '');
+    formData.append('email', data.email || '');
+    formData.append('phone', data.phone || '');
+    formData.append('currentLocation', data.currentLocation || '');
+    
+    // Add optional fields only if they have values
+    if (data.coverLetter && data.coverLetter.trim()) {
+      formData.append('coverLetter', data.coverLetter);
+    }
+    if (data.experience && data.experience.trim()) {
+      formData.append('experience', data.experience);
+    }
+    if (data.previousRole && data.previousRole.trim()) {
+      formData.append('previousRole', data.previousRole);
+    }
 
     // Add files
     const photoInput = document.querySelector('input[name="profilePhoto"]') as HTMLInputElement;
