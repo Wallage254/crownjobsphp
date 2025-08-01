@@ -49,11 +49,6 @@ export default function Navbar() {
                 </span>
               </Link>
             ))}
-            <Link href="/admin">
-              <Button className="bg-primary text-white hover:bg-primary/90">
-                Admin Login
-              </Button>
-            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -83,14 +78,6 @@ export default function Navbar() {
                   </span>
                 </Link>
               ))}
-              <Link href="/admin">
-                <Button 
-                  className="w-full bg-primary text-white hover:bg-primary/90"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Admin Login
-                </Button>
-              </Link>
             </div>
           </div>
         )}
