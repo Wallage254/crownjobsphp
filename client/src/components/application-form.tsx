@@ -302,7 +302,8 @@ export default function ApplicationForm({ job, onClose }: ApplicationFormProps) 
               <div className="flex items-start space-x-2">
                 <Checkbox
                   id="consent"
-                  {...form.register("consent")}
+                  checked={form.watch("consent")}
+                  onCheckedChange={(checked) => form.setValue("consent", !!checked)}
                   className="mt-1"
                 />
                 <Label htmlFor="consent" className="text-sm text-gray-700 leading-relaxed">

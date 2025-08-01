@@ -69,7 +69,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const jobs = await storage.getAllJobs(Object.keys(filters).length > 0 ? filters : undefined);
       res.json(jobs);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch jobs", error: error.message });
+      res.status(500).json({ message: "Failed to fetch jobs", error: (error as Error).message });
     }
   });
 
@@ -81,7 +81,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       res.json(job);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch job", error: error.message });
+      res.status(500).json({ message: "Failed to fetch job", error: (error as Error).message });
     }
   });
 
@@ -108,7 +108,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const job = await storage.createJob(jobData);
       res.status(201).json(job);
     } catch (error) {
-      res.status(400).json({ message: "Failed to create job", error: error.message });
+      res.status(400).json({ message: "Failed to create job", error: (error as Error).message });
     }
   });
 
@@ -138,7 +138,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       res.json(job);
     } catch (error) {
-      res.status(400).json({ message: "Failed to update job", error: error.message });
+      res.status(400).json({ message: "Failed to update job", error: (error as Error).message });
     }
   });
 
@@ -150,7 +150,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       res.json({ message: "Job deleted successfully" });
     } catch (error) {
-      res.status(500).json({ message: "Failed to delete job", error: error.message });
+      res.status(500).json({ message: "Failed to delete job", error: (error as Error).message });
     }
   });
 
@@ -168,7 +168,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(applications);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch applications", error: error.message });
+      res.status(500).json({ message: "Failed to fetch applications", error: (error as Error).message });
     }
   });
 
@@ -195,7 +195,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const application = await storage.createApplication(applicationData);
       res.status(201).json(application);
     } catch (error) {
-      res.status(400).json({ message: "Failed to create application", error: error.message });
+      res.status(400).json({ message: "Failed to create application", error: (error as Error).message });
     }
   });
 
@@ -208,7 +208,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       res.json(application);
     } catch (error) {
-      res.status(400).json({ message: "Failed to update application status", error: error.message });
+      res.status(400).json({ message: "Failed to update application status", error: (error as Error).message });
     }
   });
 
