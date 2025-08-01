@@ -73,14 +73,20 @@ export default function ApplicationForm({ job, onClose }: ApplicationFormProps) 
   });
 
   const onSubmit = async (data: ApplicationFormData) => {
+    console.log("Form submission data:", data);
+    console.log("Form errors:", form.formState.errors);
+    
     setIsSubmitting(true);
     
     const formData = new FormData();
     
-    // Add form fields
+    // Add form fields (excluding consent as it's not needed in the backend)
     Object.keys(data).forEach(key => {
       if (key !== 'profilePhoto' && key !== 'cv' && key !== 'consent') {
-        formData.append(key, data[key as keyof ApplicationFormData] as string);
+        const value = data[key as keyof ApplicationFormData];
+        if (value !== null && value !== undefined && value !== '') {
+          formData.append(key, value as string);
+        }
       }
     });
 
@@ -94,6 +100,12 @@ export default function ApplicationForm({ job, onClose }: ApplicationFormProps) 
     
     if (cvInput?.files?.[0]) {
       formData.append('cv', cvInput.files[0]);
+    }
+
+    // Debug: log form data contents
+    console.log("FormData contents:");
+    for (let pair of formData.entries()) {
+      console.log(pair[0] + ': ' + pair[1]);
     }
 
     submitApplication.mutate(formData);

@@ -177,6 +177,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     { name: 'cv', maxCount: 1 }
   ]), async (req, res) => {
     try {
+      console.log("Received application data:", req.body);
+      console.log("Received files:", req.files);
+      
       const applicationData = insertApplicationSchema.parse(req.body);
       
       // Handle file uploads
@@ -195,6 +198,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const application = await storage.createApplication(applicationData);
       res.status(201).json(application);
     } catch (error) {
+      console.error("Application creation error:", error);
       res.status(400).json({ message: "Failed to create application", error: (error as Error).message });
     }
   });
