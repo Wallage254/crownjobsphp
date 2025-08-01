@@ -84,7 +84,9 @@ export default function ApplicationForm({ job, onClose }: ApplicationFormProps) 
     Object.keys(data).forEach(key => {
       if (key !== 'profilePhoto' && key !== 'cv' && key !== 'consent') {
         const value = data[key as keyof ApplicationFormData];
-        if (value !== null && value !== undefined && value !== '') {
+        // For required fields, include them even if empty string to pass validation properly
+        const requiredFields = ['jobId', 'firstName', 'lastName', 'email', 'phone', 'currentLocation'];
+        if (value !== null && value !== undefined && (value !== '' || requiredFields.includes(key))) {
           formData.append(key, value as string);
         }
       }
@@ -198,7 +200,10 @@ export default function ApplicationForm({ job, onClose }: ApplicationFormProps) 
 
               <div className="mt-4">
                 <Label htmlFor="currentLocation">Current Location *</Label>
-                <Select onValueChange={(value) => form.setValue("currentLocation", value)}>
+                <Select 
+                  value={form.watch("currentLocation") || ""} 
+                  onValueChange={(value) => form.setValue("currentLocation", value, { shouldValidate: true })}
+                >
                   <SelectTrigger className="mt-1">
                     <SelectValue placeholder="Select your country" />
                   </SelectTrigger>
@@ -284,7 +289,10 @@ export default function ApplicationForm({ job, onClose }: ApplicationFormProps) 
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="experience">Years of Experience</Label>
-                  <Select onValueChange={(value) => form.setValue("experience", value)}>
+                  <Select 
+                    value={form.watch("experience") || ""} 
+                    onValueChange={(value) => form.setValue("experience", value, { shouldValidate: true })}
+                  >
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Select experience level" />
                     </SelectTrigger>
