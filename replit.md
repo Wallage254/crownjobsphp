@@ -1,6 +1,6 @@
 # Overview
 
-CrownOpportunities is a modern UK job board application specifically designed to connect African professionals with job opportunities in the United Kingdom. The platform focuses on sectors like construction, healthcare, hospitality, and skilled trades, with particular emphasis on visa sponsorship opportunities. Built as a full-stack web application, it features a React frontend with shadcn/ui components, Express.js backend, and PostgreSQL database managed through Drizzle ORM.
+CrownOpportunities is a modern UK job board application specifically designed to connect African professionals with job opportunities in the United Kingdom. The platform focuses on sectors like construction, healthcare, hospitality, and skilled trades, with particular emphasis on visa sponsorship opportunities. **Successfully migrated from Node.js/React to PHP Laravel framework (August 1, 2025)** while preserving identical functionality and UI design. Built as a full-stack web application with Laravel backend, Blade templates, and PostgreSQL database managed through Eloquent ORM.
 
 # User Preferences
 
