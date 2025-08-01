@@ -25,7 +25,8 @@ import {
   Plus,
   Building,
   MapPin,
-  DollarSign
+  DollarSign,
+  FileText
 } from "lucide-react";
 import { insertJobSchema, insertTestimonialSchema } from "@shared/schema";
 import { z } from "zod";

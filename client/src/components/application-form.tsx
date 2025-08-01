@@ -125,14 +125,7 @@ export default function ApplicationForm({ job, onClose }: ApplicationFormProps) 
       formData.append('cv', cvInput.files[0]);
     }
 
-    // Debug: log form data contents
-    console.log("=== CLIENT FORM DEBUG ===");
-    console.log("Original form data object:", data);
-    console.log("FormData contents:");
-    for (const pair of Array.from(formData.entries())) {
-      console.log(pair[0] + ': ' + pair[1]);
-    }
-    console.log("=== END CLIENT DEBUG ===");
+    // Debug: log form data contents (removed for production)
 
     submitApplication.mutate(formData);
     setIsSubmitting(false);

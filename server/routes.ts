@@ -177,19 +177,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     { name: 'cv', maxCount: 1 }
   ]), async (req, res) => {
     try {
-      console.log("=== APPLICATION SUBMISSION DEBUG ===");
-      console.log("Content-Type:", req.headers['content-type']);
-      console.log("req.body keys:", Object.keys(req.body));
-      console.log("req.body:", req.body);
-      console.log("req.files:", req.files);
-      
-      // Log each field individually to identify missing ones
-      const requiredFields = ['jobId', 'firstName', 'lastName', 'email', 'phone', 'currentLocation'];
-      console.log("Checking required fields:");
-      requiredFields.forEach(field => {
-        console.log(`${field}: "${req.body[field]}" (type: ${typeof req.body[field]})`);
-      });
-      console.log("=== END DEBUG ===");
+      // Application submission received
       
       const applicationData = insertApplicationSchema.parse(req.body);
       
