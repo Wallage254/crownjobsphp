@@ -76,18 +76,30 @@ export default function ApplicationForm({ job, onClose }: ApplicationFormProps) 
     console.log("Form submission data:", data);
     console.log("Form errors:", form.formState.errors);
     
+    // Check all required fields are present before submitting
+    const requiredFields = ['jobId', 'firstName', 'lastName', 'email', 'phone', 'currentLocation'];
+    const missingFields = requiredFields.filter(field => !data[field as keyof ApplicationFormData] || data[field as keyof ApplicationFormData] === '');
+    
+    if (missingFields.length > 0) {
+      console.error("Missing required fields:", missingFields);
+      toast({
+        title: "Form Incomplete",
+        description: `Please fill in all required fields: ${missingFields.join(', ')}`,
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setIsSubmitting(true);
     
     const formData = new FormData();
     
-    // Add form fields (excluding consent as it's not needed in the backend)
+    // Add all form fields (excluding consent and file fields)
     Object.keys(data).forEach(key => {
       if (key !== 'profilePhoto' && key !== 'cv' && key !== 'consent') {
         const value = data[key as keyof ApplicationFormData];
-        // For required fields, include them even if empty string to pass validation properly
-        const requiredFields = ['jobId', 'firstName', 'lastName', 'email', 'phone', 'currentLocation'];
-        if (value !== null && value !== undefined && (value !== '' || requiredFields.includes(key))) {
-          formData.append(key, value as string);
+        if (value !== null && value !== undefined) {
+          formData.append(key, String(value));
         }
       }
     });

@@ -180,6 +180,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Received application data:", req.body);
       console.log("Received files:", req.files);
       
+      // Log each field individually to identify missing ones
+      const requiredFields = ['jobId', 'firstName', 'lastName', 'email', 'phone', 'currentLocation'];
+      console.log("Checking required fields:");
+      requiredFields.forEach(field => {
+        console.log(`${field}: "${req.body[field]}" (type: ${typeof req.body[field]})`);
+      });
+      
       const applicationData = insertApplicationSchema.parse(req.body);
       
       // Handle file uploads
@@ -199,6 +206,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(201).json(application);
     } catch (error) {
       console.error("Application creation error:", error);
+      if (error instanceof Error && 'issues' in error) {
+        console.error("Validation issues:", (error as any).issues);
+      }
       res.status(400).json({ message: "Failed to create application", error: (error as Error).message });
     }
   });

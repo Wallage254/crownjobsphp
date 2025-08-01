@@ -475,7 +475,7 @@ export default function AdminDashboard() {
                                 {job.location}
                               </p>
                               <p className="text-xs text-gray-500 mt-1">
-                                Posted {new Date(job.createdAt).toLocaleDateString()}
+                                Posted {job.createdAt ? new Date(job.createdAt).toLocaleDateString() : 'N/A'}
                               </p>
                             </div>
                             <div className="flex space-x-2">
@@ -543,15 +543,23 @@ export default function AdminDashboard() {
                                     {application.firstName} {application.lastName}
                                   </div>
                                   <div className="text-sm text-gray-500">{application.email}</div>
+                                  <div className="text-xs text-gray-400">{application.phone}</div>
+                                  <div className="text-xs text-gray-400">{application.currentLocation}</div>
                                 </div>
                               </div>
                             </TableCell>
                             <TableCell>
                               <div className="text-sm text-gray-900">Job #{application.jobId.slice(-8)}</div>
+                              {application.experience && (
+                                <div className="text-xs text-gray-500">Experience: {application.experience}</div>
+                              )}
+                              {application.previousRole && (
+                                <div className="text-xs text-gray-500">Previous: {application.previousRole}</div>
+                              )}
                             </TableCell>
                             <TableCell>
                               <div className="text-sm text-gray-500">
-                                {new Date(application.createdAt).toLocaleDateString()}
+                                {application.createdAt ? new Date(application.createdAt).toLocaleDateString() : 'N/A'}
                               </div>
                             </TableCell>
                             <TableCell>
@@ -560,9 +568,23 @@ export default function AdminDashboard() {
                             <TableCell>
                               <div className="flex space-x-2">
                                 {application.cvFile && (
-                                  <Button variant="ghost" size="sm">
-                                    <Eye className="w-4 h-4 mr-1" />
-                                    CV
+                                  <Button variant="ghost" size="sm" asChild>
+                                    <a href={application.cvFile} target="_blank" rel="noopener noreferrer">
+                                      <Eye className="w-4 h-4 mr-1" />
+                                      CV
+                                    </a>
+                                  </Button>
+                                )}
+                                {application.coverLetter && (
+                                  <Button 
+                                    variant="ghost" 
+                                    size="sm"
+                                    onClick={() => {
+                                      alert(`Cover Letter:\n\n${application.coverLetter}`);
+                                    }}
+                                  >
+                                    <FileText className="w-4 h-4 mr-1" />
+                                    Letter
                                   </Button>
                                 )}
                                 {application.status === 'pending' && (
@@ -868,7 +890,7 @@ export default function AdminDashboard() {
                             <p className="text-sm font-medium text-gray-900 mt-1">{message.subject}</p>
                             <p className="text-sm text-gray-700 mt-2">{message.message}</p>
                             <p className="text-xs text-gray-500 mt-2">
-                              {new Date(message.createdAt).toLocaleDateString()}
+                              {message.createdAt ? new Date(message.createdAt).toLocaleDateString() : 'N/A'}
                             </p>
                           </div>
                           <div>
