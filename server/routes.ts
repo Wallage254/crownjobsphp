@@ -230,7 +230,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(testimonials);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch testimonials", error: error.message });
+      res.status(500).json({ message: "Failed to fetch testimonials", error: (error as Error).message });
     }
   });
 
@@ -246,7 +246,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const testimonial = await storage.createTestimonial(testimonialData);
       res.status(201).json(testimonial);
     } catch (error) {
-      res.status(400).json({ message: "Failed to create testimonial", error: error.message });
+      res.status(400).json({ message: "Failed to create testimonial", error: (error as Error).message });
     }
   });
 
@@ -265,7 +265,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       res.json(testimonial);
     } catch (error) {
-      res.status(400).json({ message: "Failed to update testimonial", error: error.message });
+      res.status(400).json({ message: "Failed to update testimonial", error: (error as Error).message });
     }
   });
 
@@ -277,7 +277,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       res.json({ message: "Testimonial deleted successfully" });
     } catch (error) {
-      res.status(500).json({ message: "Failed to delete testimonial", error: error.message });
+      res.status(500).json({ message: "Failed to delete testimonial", error: (error as Error).message });
     }
   });
 
@@ -287,7 +287,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const messages = await storage.getAllMessages();
       res.json(messages);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch messages", error: error.message });
+      res.status(500).json({ message: "Failed to fetch messages", error: (error as Error).message });
     }
   });
 
@@ -297,7 +297,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const message = await storage.createMessage(messageData);
       res.status(201).json(message);
     } catch (error) {
-      res.status(400).json({ message: "Failed to send message", error: error.message });
+      res.status(400).json({ message: "Failed to send message", error: (error as Error).message });
     }
   });
 
@@ -309,7 +309,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       res.json(message);
     } catch (error) {
-      res.status(400).json({ message: "Failed to mark message as read", error: error.message });
+      res.status(400).json({ message: "Failed to mark message as read", error: (error as Error).message });
     }
   });
 
@@ -319,7 +319,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const categories = await storage.getAllCategories();
       res.json(categories);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch categories", error: error.message });
+      res.status(500).json({ message: "Failed to fetch categories", error: (error as Error).message });
     }
   });
 
@@ -329,7 +329,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const category = await storage.createCategory(categoryData);
       res.status(201).json(category);
     } catch (error) {
-      res.status(400).json({ message: "Failed to create category", error: error.message });
+      res.status(400).json({ message: "Failed to create category", error: (error as Error).message });
     }
   });
 
@@ -342,7 +342,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       res.json(category);
     } catch (error) {
-      res.status(400).json({ message: "Failed to update category", error: error.message });
+      res.status(400).json({ message: "Failed to update category", error: (error as Error).message });
     }
   });
 
@@ -354,7 +354,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       res.json({ message: "Category deleted successfully" });
     } catch (error) {
-      res.status(500).json({ message: "Failed to delete category", error: error.message });
+      res.status(500).json({ message: "Failed to delete category", error: (error as Error).message });
     }
   });
 

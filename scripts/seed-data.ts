@@ -1,5 +1,5 @@
 import { db } from "../server/db";
-import { jobs, testimonials, categories } from "@shared/schema";
+import { jobs, testimonials, categories } from "../shared/schema";
 
 const sampleJobs = [
   {
