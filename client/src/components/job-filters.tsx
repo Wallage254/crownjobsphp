@@ -12,7 +12,7 @@ interface JobFiltersProps {
 
 export default function JobFilters({ onFilterChange }: JobFiltersProps) {
   const [filters, setFilters] = useState({
-    salaryRange: "",
+    salaryRange: "any",
     jobTypes: [] as string[],
     ukLocation: "all",
     experience: "any"
@@ -21,7 +21,7 @@ export default function JobFilters({ onFilterChange }: JobFiltersProps) {
   useEffect(() => {
     const searchFilters: any = {};
     
-    if (filters.salaryRange) {
+    if (filters.salaryRange && filters.salaryRange !== 'any') {
       const [min, max] = filters.salaryRange.split('-').map(v => parseInt(v));
       if (min) searchFilters.salaryMin = min;
       if (max) searchFilters.salaryMax = max;
@@ -45,10 +45,10 @@ export default function JobFilters({ onFilterChange }: JobFiltersProps) {
 
   const clearFilters = () => {
     setFilters({
-      salaryRange: "",
+      salaryRange: "any",
       jobTypes: [],
-      ukLocation: "",
-      experience: ""
+      ukLocation: "all",
+      experience: "any"
     });
   };
 
@@ -72,7 +72,7 @@ export default function JobFilters({ onFilterChange }: JobFiltersProps) {
               <SelectValue placeholder="Any" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Any</SelectItem>
+              <SelectItem value="any">Any</SelectItem>
               <SelectItem value="20000-30000">£20,000 - £30,000</SelectItem>
               <SelectItem value="30000-40000">£30,000 - £40,000</SelectItem>
               <SelectItem value="40000-50000">£40,000 - £50,000</SelectItem>
