@@ -1,0 +1,33 @@
+You are a full‑stack developer and UI/UX designer. Build a cutting‑edge UK job board called “CrownOpportunities” that connects people in Africa with job opportunities in the UK—especially in sectors like construction, nursing, caregiving, hospitality, and skilled trades.
+
+**Frontend (React + animated UI):**
+- Landing/Home page: bold hero headers with background animation (e.g. subtle gradient or line animation), tagline: “From Africa to UK – Your Next Job Awaits”.
+- Prominent search bar with filters: job type, location (African country), category.
+- Job listings: display job cards with **employer logo**, job title, sector, location, salary; clicking reveals full details including **pictures of workplace**, **job description**, and application button.
+- Application process: when a job seeker applies, they fill in profile with **photo**, phone, email, CV upload; the UI shows preview of their image and info.
+- Reviews/testimonials section: animated carousel of testimonials—photo of person, name or pseudonym, country, rating, comment, and optional short video. Include animated transitions. :contentReference[oaicite:2]{index=2}
+- Contact form: “Message Us” collects name, email, subject, message, sends backend request.
+- Admin Dashboard (hidden route /admin, token-protected):
+  - Upload new job posts: title, category, UK location, description, images, employer details.
+  - View incoming job applications: display applicant photo, name, phone, email, CV link.
+  - Upload and curate testimonials: photo, name/pseudonym, comment, rating.
+- Modern aesthetic: vibrant colors, clean typography, large background visuals, micro‑animations, hover effects, and smooth transitions — inspired by modern job‑board UI styles like Jobsync, JobLink designs :contentReference[oaicite:3]{index=3}.
+
+**Backend (Node.js + Express):**
+- REST API endpoints:
+  - `/api/jobs` (GET, POST, PUT, DELETE)
+  - `/api/applications` (GET admin, POST user)
+  - `/api/testimonials` (GET public, POST admin)
+  - `/api/contact` (POST)
+- Database: MySQL with tables: `jobs`, `applications`, `testimonials`, `messages`.
+- File storage: images/CVs uploaded to server or cloud (e.g., AWS S3).
+- Email: Send confirmation or alerts with SMTP credentials.
+- Admin auth: token or basic auth for admin endpoints.
+
+**General Deliverables:**
+- Component layout and folder structure for React (Home, JobList, JobDetail, ApplicationForm, Testimonials, AdminDashboard).
+- Express setup with controllers, middleware, routers, models.
+- Database schema definitions (SQL or using ORM like Sequelize).
+- Example `.env.example`, config for database, SMTP, file paths.
+- Deployment guidance: hosting Node + React on domain (Live in UK?), uploading via admin interface.
+- Notes on design: recommended color palettes, animation libraries (e.g. Framer Motion or CSS transitions), responsive design for mobile users.
